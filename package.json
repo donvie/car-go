@@ -1,0 +1,44 @@
+{
+  "name": "car-rental-system",
+  "version": "0.0.1",
+  "description": "A Quasar Project",
+  "productName": "Car Rental System",
+  "author": "",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev",
+    "build": "quasar build"
+  },
+  "dependencies": {
+    "@fawmi/vue-google-maps": "^0.9.79",
+    "@quasar/extras": "^1.16.4",
+    "firebase": "^10.11.1",
+    "pinia": "^2.0.11",
+    "quasar": "^2.8.0",
+    "vue": "^3.4.18",
+    "vue-router": "^4.0.12",
+    "vue3-google-maps": "^0.0.1",
+    "vue3-signature": "^0.2.4",
+    "vuefire": "^3.1.23"
+  },
+  "devDependencies": {
+    "@quasar/app-vite": "^1.8.0",
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
+    "autoprefixer": "^10.4.2",
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "leaflet": "^1.9.4",
+    "postcss": "^8.4.14",
+    "prettier": "^2.5.1",
+    "vite-plugin-checker": "^0.6.4"
+  },
+  "engines": {
+    "node": "^20 || ^18 || ^16",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}
