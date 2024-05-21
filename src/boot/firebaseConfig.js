@@ -15,6 +15,14 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 export default ({ app, router, store }) => {
+  document.addEventListener(
+    "deviceready",
+    () => {
+      app.config.globalProperties.$isCordovaReady = true;
+    },
+    false
+  );
+
   app.use(VueFire, {
     firebaseApp,
     modules: [VueFireAuth()],

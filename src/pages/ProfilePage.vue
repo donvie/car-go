@@ -45,12 +45,10 @@
           <q-item-label caption>{{ currentUser.phoneNumber }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple v-if="currentUser.role === 'admin'">
         <q-item-section>
-          <q-item-label>Share Location</q-item-label>
-          <q-item-label caption>
-            <q-toggle v-model="location" color="primary"
-          /></q-item-label>
+          <q-item-label>Enable Location</q-item-label>
+          <q-item-label caption> {{ currentUser.enableLocation }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-card-actions align="center" class="q-my-md">
@@ -60,7 +58,7 @@
       </q-card-actions>
     </q-card>
 
-    <q-dialog v-model="editProfileLayout">
+    <q-dialog v-model="editProfileLayout" maximized>
       <q-layout view="Lhh lpR fff" container class="bg-white text-dark">
         <q-header class="bg-primary">
           <q-toolbar>
@@ -77,20 +75,19 @@
         <q-footer class="bg-transparent">
           <q-toolbar>
             <q-toolbar-title></q-toolbar-title>
-            <q-btn label="Proceed" color="primary" />
+            <!-- <q-btn label="Proceed" color="primary" /> -->
           </q-toolbar>
         </q-footer>
         <q-page-container>
           <q-page padding>
-            <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-              <div align="center">
-                <q-uploader
-                  accept=".jpg, image/*"
-                  hide-upload-btn
-                  label="Profile Picture"
-                  @added="handleAdded"
-                />
-              </div>
+            <q-form @submit="onSubmit" @reset="onReset">
+              <q-uploader
+                accept=".jpg, image/*"
+                hide-upload-btn
+                label="Profile Picture"
+                @added="handleAdded"
+                class="q-mb-md"
+              />
               <q-input
                 filled
                 v-model="currentUser.firstName"
@@ -209,6 +206,13 @@
                 ]"
               />
 
+              <q-toggle
+                v-if="currentUser.role === 'admin'"
+                v-model="currentUser.enableLocation"
+                label="Share location"
+                color="primary"
+              />
+
               <!-- <q-input
                 filled
                 type="email"
@@ -315,6 +319,8 @@ const onSubmit = async () => {
       dateOfBirth: currentUser.value.dateOfBirth,
       phoneNumber: currentUser.value.phoneNumber,
       profilePic: downloadURL ? downloadURL : currentUser.value.profilePic,
+      enableLocation: currentUser.value.enableLocation,
+      role: currentUser.value.role,
       // dateOfPickUp: dateOfPickUp.value,
       // dateOfReturn: dateOfReturn.value,
     });
@@ -330,6 +336,8 @@ const onSubmit = async () => {
       dateOfBirth: currentUser.value.dateOfBirth,
       phoneNumber: currentUser.value.phoneNumber,
       profilePic: downloadURL ? downloadURL : currentUser.value.profilePic,
+      enableLocation: currentUser.value.enableLocation,
+      role: currentUser.value.role,
     };
 
     LocalStorage.set("user", currentUser.value);

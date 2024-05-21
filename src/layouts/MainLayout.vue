@@ -3,7 +3,7 @@
     <q-header elevated class="q-py-sm">
       <q-toolbar>
         <q-icon name="car_rental" size="42px" color="white" />
-        <q-toolbar-title> Car Rental System </q-toolbar-title>
+        <q-toolbar-title> Car go </q-toolbar-title>
         <q-btn
           flat
           dense
@@ -74,6 +74,12 @@
 
     <q-page-container>
       <router-view />
+
+      <!-- <q-btn @click="getLocation()" label="Get Location" color="primary" />
+      <div v-if="position">
+        <p>Latitude: {{ position.latitude }}</p>
+        <p>Longitude: {{ position.longitude }}</p>
+      </div> -->
     </q-page-container>
   </q-layout>
 </template>
@@ -88,15 +94,32 @@ import {
   signOut,
 } from "firebase/auth";
 import { ref, onMounted, getCurrentInstance } from "vue";
+
+import { useFirestore } from "vuefire";
 import router from "src/router";
 const auth = useFirebaseAuth();
 const app = getCurrentInstance().appContext.config.globalProperties;
 const $q = useQuasar();
 
+const position = ref(null);
+
+import {
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  where,
+  query,
+  GeoPoint,
+} from "firebase/firestore";
+
 defineOptions({
   name: "MainLayout",
 });
 
+let currentUser = LocalStorage.getItem("user");
+
+const db = useFirestore();
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -105,7 +128,57 @@ onMounted(() => {
     } else {
     }
   });
+  getLocation();
 });
+
+const getLocation = () => {
+  if (currentUser.role === "admin" && currentUser.enableLocation) {
+    navigator.geolocation.watchPosition(onSuccess, onError, {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    });
+
+    function onSuccess(pos) {
+      position.value = {
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      };
+      // alert("vv", pos.coords.latitude);
+      updateLocation();
+    }
+
+    function onError(error) {
+      // alert("Error: " + error.message);
+    }
+  }
+};
+
+const updateLocation = async () => {
+  try {
+    const docRef = doc(db, "users", currentUser.uid);
+
+    await updateDoc(docRef, {
+      // location: new firebase.firestore.GeoPoint(
+      //   position.value.latitude,
+      //   position.value.longitude
+      // ),
+      location: new GeoPoint(position.value.latitude, position.value.longitude),
+      // latitude: position.value.latitude,
+      // longitude: position.value.longitude,
+      // updated_at: new Date(),
+    });
+    // $q.notify({
+    //   type: "positive",
+    //   message: "Location updated successfully!",
+    // });
+  } catch (e) {
+    // $q.notify({
+    //   type: "negative",
+    //   message: "Error updating document: " + e,
+    // });
+  }
+};
 
 const leftDrawerOpen = ref(false);
 

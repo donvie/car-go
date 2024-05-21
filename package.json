@@ -2,7 +2,7 @@
   "name": "car-rental-system",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Car Rental System",
+  "productName": "Car go",
   "author": "",
   "private": true,
   "scripts": {
@@ -13,14 +13,12 @@
     "build": "quasar build"
   },
   "dependencies": {
-    "@fawmi/vue-google-maps": "^0.9.79",
     "@quasar/extras": "^1.16.4",
     "firebase": "^10.11.1",
     "pinia": "^2.0.11",
     "quasar": "^2.8.0",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12",
-    "vue3-google-maps": "^0.0.1",
     "vue3-signature": "^0.2.4",
     "vuefire": "^3.1.23"
   },

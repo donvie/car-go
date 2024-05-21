@@ -25,7 +25,9 @@
         v-model="password"
         filled
         :type="isPwd ? 'password' : 'text'"
-        :rules="[(val) => (val && val.length > 0) || 'Email cannot be empty']"
+        :rules="[
+          (val) => (val && val.length > 0) || 'Password cannot be empty',
+        ]"
       >
         <template v-slot:append>
           <q-icon
@@ -76,8 +78,8 @@ const auth = useFirebaseAuth();
 const db = useFirestore();
 const $q = useQuasar();
 
-const email = ref("heridonvi_tagaban12@yahoo.com");
-const password = ref("Pass123$");
+const email = ref("");
+const password = ref("");
 const isPwd = ref(true);
 
 // console.log("serverTimestamp", serverTimestamp());

@@ -59,7 +59,9 @@
         v-model="password"
         filled
         :type="isPwd ? 'password' : 'text'"
-        :rules="[(val) => (val && val.length > 0) || 'Email cannot be empty']"
+        :rules="[
+          (val) => (val && val.length > 0) || 'Password cannot be empty',
+        ]"
       >
         <template v-slot:append>
           <q-icon
@@ -173,7 +175,7 @@
 <script setup>
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useQuasar } from "quasar";
-import { ref } from "vue";
+import { ref, getCurrentInstance } from "vue";
 import { useFirestore } from "vuefire";
 import {
   collection,
@@ -194,6 +196,8 @@ import { uid } from "quasar";
 defineOptions({
   name: "IndexPage",
 });
+
+const app = getCurrentInstance().appContext.config.globalProperties;
 
 const auth = getAuth();
 const db = useFirestore();
@@ -279,6 +283,8 @@ const addUserDb = async (userCredential) => {
       icon: "check",
       message: "You have created account successfully.",
     });
+
+    app.$router.push("/login");
     // You can display a success message or perform any other actions here
   } catch (error) {
     console.error("Error uploading file:", error);

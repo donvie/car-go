@@ -264,195 +264,216 @@
 
               <q-separator />
 
-              <div v-show="tab1 === 'details'">
-                <q-input
-                  filled
-                  type="date"
-                  v-model="dateNeeded"
-                  label="Date Needed"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-                <q-input
-                  filled
-                  type="number"
-                  v-model="numberOfDays"
-                  label="Number of days"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-                <q-input
-                  filled
-                  v-model="currentUser.firstName"
-                  label="First Name"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-
-                <q-input
-                  filled
-                  v-model="currentUser.middleName"
-                  label="Middle Name"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-
-                <q-input
-                  filled
-                  v-model="currentUser.lastName"
-                  label="Last Name"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-
-                <q-input
-                  filled
-                  v-model="currentUser.address"
-                  label="Address"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-
-                <q-input
-                  filled
-                  type="email"
-                  v-model="currentUser.email"
-                  label="Email"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Email cannot be empty',
-                  ]"
-                />
-
-                <q-input
-                  filled
-                  v-model="currentUser.nationality"
-                  label="Nationality"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-
-                <q-input
-                  filled
-                  type="date"
-                  v-model="currentUser.dateOfBirth"
-                  label="Date of Birth"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-
-                <q-input
-                  filled
-                  v-model="currentUser.phoneNumber"
-                  label="Phone Number"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
-                />
-              </div>
-
-              <div v-show="tab1 === 'attachment'">
-                <div class="q-gutter-md">
-                  <div class="text-h6">Driver's ID</div>
-                  <q-uploader
-                    accept=".jpg, image/*"
-                    hide-upload-btn
-                    label="Front Picture"
-                    @added="driversIDFrontAdded"
+              <q-tab-panels
+                v-model="tab1"
+                keep-alive
+                animated
+                class="shadow-2 rounded-borders"
+              >
+                <q-tab-panel name="details">
+                  <q-input
+                    filled
+                    type="date"
+                    v-model="dateNeeded"
+                    label="Date Needed"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
                   />
-                  <q-uploader
-                    accept=".jpg, image/*"
-                    hide-upload-btn
-                    label="Back Picture"
-                    @added="driversIDBackAdded"
+                  <q-input
+                    filled
+                    type="number"
+                    v-model="numberOfDays"
+                    label="Number of days"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
                   />
-                  <div class="text-h6">Supporting ID</div>
-                  <q-uploader
-                    accept=".jpg, image/*"
-                    hide-upload-btn
-                    label="Front Picture"
-                    @added="supportingIDFrontAdded"
+                  <q-input
+                    filled
+                    v-model="currentUser.firstName"
+                    label="First Name"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
                   />
-                  <q-uploader
-                    accept=".jpg, image/*"
-                    hide-upload-btn
-                    label="Back Picture"
-                    @added="supportingIDBackAdded"
-                  />
-                  <q-btn
-                    color="primary"
-                    glossy
-                    unelevated
-                    icon="camera_enhance"
-                    label="Take a selfie"
-                  />
-                  <q-img
-                    src="https://cdn.quasar.dev/img/non-existent-image-src.png"
-                    style="height: 220px; max-width: 100%"
-                  >
-                    <template v-slot:error>
-                      <div
-                        class="absolute-full flex flex-center bg-negative text-white"
-                      >
-                        Please take a selfie.
-                      </div>
-                    </template>
-                  </q-img>
-                </div>
-              </div>
 
-              <div v-if="tab1 === 'payment'">
-                <div class="text-h6 q-mb-md">Scan the qrcode to pay</div>
-                <q-img class="q-mb-md" src="~assets/image1.jpg" />
-                <q-img class="q-mb-md" src="~assets/image2.jpg" />
-                <q-select
-                  class="q-mb-md"
-                  filled
-                  v-model="payment"
-                  :options="['Gcash', 'Paymaya']"
-                  label="Payment"
-                />
-                <q-select
-                  filled
-                  class="q-mb-md"
-                  v-model="paymentType"
-                  :options="['Full payment', 'Down payment']"
-                  label="Payment Type"
-                />
-                <q-uploader
-                  accept=".jpg, image/*"
-                  hide-upload-btn
-                  class="q-mb-md"
-                  label="Upload the receipt"
-                  @added="receiptAdded"
-                />
-                <div class="text-h6">Draw your signature</div>
-                <q-card style="z-index: 99999">
-                  <Vue3Signature
-                    ref="signature1"
-                    :h="'200px'"
-                    :sigOption="state.option"
-                    :disabled="state.disabled"
-                  ></Vue3Signature>
-                </q-card>
-              </div>
+                  <q-input
+                    filled
+                    v-model="currentUser.middleName"
+                    label="Middle Name"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
+                  />
+
+                  <q-input
+                    filled
+                    v-model="currentUser.lastName"
+                    label="Last Name"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
+                  />
+
+                  <q-input
+                    filled
+                    v-model="currentUser.address"
+                    label="Address"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
+                  />
+
+                  <q-input
+                    filled
+                    type="email"
+                    v-model="currentUser.email"
+                    label="Email"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Email cannot be empty',
+                    ]"
+                  />
+
+                  <q-input
+                    filled
+                    v-model="currentUser.nationality"
+                    label="Nationality"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
+                  />
+
+                  <q-input
+                    filled
+                    type="date"
+                    v-model="currentUser.dateOfBirth"
+                    label="Date of Birth"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
+                  />
+
+                  <q-input
+                    filled
+                    v-model="currentUser.phoneNumber"
+                    label="Phone Number"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) || 'Field cannot be empty',
+                    ]"
+                  />
+                </q-tab-panel>
+
+                <q-tab-panel name="attachment">
+                  <div class="row q-gutter-md">
+                    <div class="text-h6">Driver's ID</div>
+                    <q-uploader
+                      accept=".jpg, image/*"
+                      hide-upload-btn
+                      label="Front Picture"
+                      @added="driversIDFrontAdded"
+                    />
+                    <q-uploader
+                      accept=".jpg, image/*"
+                      hide-upload-btn
+                      label="Back Picture"
+                      @added="driversIDBackAdded"
+                    />
+                    <div class="text-h6">Supporting ID</div>
+                    <q-uploader
+                      accept=".jpg, image/*"
+                      hide-upload-btn
+                      label="Front Picture"
+                      @added="supportingIDFrontAdded"
+                    />
+                    <q-uploader
+                      accept=".jpg, image/*"
+                      hide-upload-btn
+                      label="Back Picture"
+                      @added="supportingIDBackAdded"
+                    />
+                    <q-btn
+                      color="primary"
+                      glossy
+                      @click="takePicture()"
+                      unelevated
+                      icon="camera_enhance"
+                      label="Take a selfie"
+                    />
+                    <q-img
+                      v-if="selfieData"
+                      :src="selfieData"
+                      style="height: 220px; max-width: 100%"
+                    >
+                      <template v-slot:error>
+                        <div
+                          class="absolute-full flex flex-center bg-negative text-white"
+                        >
+                          Please take a selfie.
+                        </div>
+                      </template>
+                    </q-img>
+                  </div>
+                </q-tab-panel>
+
+                <q-tab-panel name="payment">
+                  <div class="row">
+                    <div class="text-h6 q-mb-md">Scan the qrcode to pay</div>
+                    <q-img class="q-mb-md" src="~assets/image1.jpg" />
+                    <q-img class="q-mb-md" src="~assets/image2.jpg" />
+                    <q-select
+                      class="q-mb-md full-width"
+                      filled
+                      v-model="payment"
+                      :options="['Gcash', 'Paymaya']"
+                      label="Payment"
+                    />
+                    <q-select
+                      filled
+                      class="q-mb-md full-width"
+                      v-model="paymentType"
+                      :options="['Full payment', 'Down payment']"
+                      label="Payment Type"
+                    />
+                    <q-uploader
+                      accept=".jpg, image/*"
+                      hide-upload-btn
+                      class="q-mb-md"
+                      label="Upload the receipt"
+                      @added="receiptAdded"
+                    />
+                    <div class="text-h6">Draw your signature</div>
+                    <q-card style="z-index: 99999">
+                      <Vue3Signature
+                        ref="signature1"
+                        :h="'200px'"
+                        :sigOption="state.option"
+                        :disabled="state.disabled"
+                      ></Vue3Signature>
+                    </q-card>
+                  </div>
+                </q-tab-panel>
+              </q-tab-panels>
             </q-card>
           </q-page>
         </q-page-container>
@@ -479,7 +500,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="addLayout">
+    <q-dialog v-model="addLayout" maximized>
       <q-layout view="Lhh lpR fff" container class="bg-white text-dark">
         <q-header class="bg-primary">
           <q-toolbar>
@@ -511,49 +532,67 @@
 
         <q-page-container>
           <q-page padding>
-            <div class="q-gutter-md" align="center">
-              <q-uploader
-                accept=".jpg, image/*"
-                hide-upload-btn
-                label="Vehicle Image"
-                @added="handleAdded"
-              />
-              <q-input outlined v-model="vehicleName" label="Vehicle Name" />
-              <q-select
-                outlined
-                :options="[
-                  'suv',
-                  'van',
-                  'sedan',
-                  'luxury',
-                  'special',
-                  'hatchback',
-                  'Multi-Purpose Vehicle or (MPV)',
-                ]"
-                v-model="typeOfVehicle"
-                label="Type of Vehicle"
-              />
-              <q-input
-                outlined
-                type="number"
-                v-model="seaters"
-                label="Seaters"
-              />
-              <q-input outlined v-model="gasType" label="Gas Type" />
-              <q-input outlined v-model="description" label="Description" />
-              <q-input
-                outlined
-                v-model="airConditioned"
-                label="Air contioned"
-              />
-              <q-input outlined v-model="rate" label="Rate" />
-              <q-select
-                :options="['Manual', 'Autmatic', 'Automatic/Manual']"
-                outlined
-                v-model="transmission"
-                label="Transmission"
-              />
-            </div>
+            <q-uploader
+              accept=".jpg, image/*"
+              hide-upload-btn
+              label="Vehicle Image"
+              class="q-mb-md"
+              @added="handleAdded"
+            />
+            <q-input
+              class="q-mb-md"
+              outlined
+              v-model="vehicleName"
+              label="Vehicle Name"
+            />
+            <q-select
+              class="q-mb-md"
+              outlined
+              :options="[
+                'suv',
+                'van',
+                'sedan',
+                'luxury',
+                'special',
+                'hatchback',
+                'Multi-Purpose Vehicle or (MPV)',
+              ]"
+              v-model="typeOfVehicle"
+              label="Type of Vehicle"
+            />
+            <q-input
+              class="q-mb-md"
+              outlined
+              type="number"
+              v-model="seaters"
+              label="Seaters"
+            />
+            <q-input
+              class="q-mb-md"
+              outlined
+              v-model="gasType"
+              label="Gas Type"
+            />
+            <q-input
+              class="q-mb-md"
+              outlined
+              v-model="description"
+              label="Description"
+            />
+            <q-input
+              class="q-mb-md"
+              outlined
+              v-model="airConditioned"
+              label="Air contioned"
+            />
+            <q-input class="q-mb-md" outlined v-model="rate" label="Rate" />
+            <q-select
+              class="q-mb-md"
+              :options="['Manual', 'Autmatic', 'Automatic/Manual']"
+              outlined
+              v-model="transmission"
+              label="Transmission"
+            />
             <!-- <q-select outlined v-model="model" :options="" label="Outlined" /> -->
           </q-page>
         </q-page-container>
@@ -564,7 +603,7 @@
       :offset="[18, 18]"
       v-if="currentUser.role === 'admin'"
     >
-      <q-btn round color="primary" @click="addLayout = true" icon="add" />
+      <q-btn round color="primary" @click="clearVehicle()" icon="add" />
     </q-page-sticky>
   </q-page>
 </template>
@@ -600,6 +639,8 @@ defineOptions({
 });
 console.log(";rentalsrentals", rentals);
 const storage = getStorage();
+const selfieData = ref(null);
+const selfieData1 = ref(null);
 const basic = ref(false);
 
 const rentalDetails = ref({});
@@ -636,6 +677,7 @@ const driversIDFront = ref(null);
 const driversIDBack = ref(null);
 const supportingIDFront = ref(null);
 const supportingIDBack = ref(null);
+const selfiefetchdownloadURL = ref(null);
 const receipt = ref(null);
 const file = ref("");
 
@@ -686,6 +728,53 @@ async function handleAdded(files) {
   file.value = files[0];
 }
 
+const takePicture = async () => {
+  navigator.camera.getPicture(onSuccess, onFail, {
+    quality: 50,
+    destinationType: Camera.DestinationType.DATA_URL,
+  });
+
+  function onSuccess(imageDataUri) {
+    // Call an async function to handle the async operations
+    handleImageUpload(imageDataUri);
+  }
+
+  function onFail(message) {}
+
+  async function handleImageUpload(imageDataUri) {
+    try {
+      // Prepare the image data
+      const imageData = "data:image/jpeg;base64," + imageDataUri;
+      const rawImageData = imageDataUri;
+      selfieData.value = imageData;
+      selfieData1.value = rawImageData;
+
+      // Generate unique ID for the image file name
+      const uniqueId = uid();
+      const fileName = `${uniqueId.slice(-12)}-selfie.jpg`;
+
+      // Convert base64 to Blob
+      const contentType = "image/jpeg"; // Ensure this matches your image format
+      const blob = base64ToBlob(rawImageData, contentType);
+
+      // Define storage reference and metadata
+      const storageRef1 = storageRef(storage, fileName);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+
+      // Upload the image
+      const snapshot = await uploadBytes(storageRef1, blob, metadata);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      selfiefetchdownloadURL.value = downloadURL;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+    }
+  }
+};
+
 async function editRentalVehicle() {
   // image.value = rentalDetails.value.image;
   vehicleName.value = rentalDetails.value.vehicleName;
@@ -698,6 +787,20 @@ async function editRentalVehicle() {
   transmission.value = rentalDetails.value.transmission;
   action.value = "edit";
   addLayout.value = true;
+}
+
+async function clearVehicle() {
+  addLayout.value = true;
+  // image.value = rentalDetails.value.image;
+  vehicleName.value = "";
+  typeOfVehicle.value = "";
+  seaters.value = 0;
+  gasType.value = "";
+  description.value = "";
+  airConditioned.value = "";
+  rate.value = 0;
+  transmission.value = "";
+  action.value = "add";
 }
 
 async function deleteRentalVehicle() {
@@ -936,6 +1039,27 @@ const signatureFetch = async () => {
   return downloadURL;
 };
 
+const selfieFetch = async () => {
+  let uid4 = uid();
+  const data = selfieData.value;
+  const metadata = {
+    contentType: "image/jpeg",
+  };
+
+  const base64DataWithoutPrefix = selfieData1.value;
+
+  const base64String = base64DataWithoutPrefix;
+  const contentType = "image/png"; // or the appropriate content type for your data
+  const blob = base64ToBlob(base64String, contentType);
+
+  const storageRef1 = storageRef(storage, `${uid4.slice(-12)}-selfie.jpg`);
+  const snapshot = await uploadBytes(storageRef1, blob, metadata);
+
+  const downloadURL = await getDownloadURL(snapshot.ref);
+  selfiefetchdownloadURL.value = downloadURL;
+  return downloadURL;
+};
+
 function base64ToBlob(base64String, contentType) {
   const byteCharacters = atob(base64String);
   const byteNumbers = new Array(byteCharacters.length);
@@ -969,6 +1093,7 @@ const saveToHistory = async () => {
   const image4 = await supportingIDBackFetch();
   const image5 = await receiptFetch();
   const image6 = await signatureFetch();
+  let image7 = selfiefetchdownloadURL.value;
 
   const docRef = await addDoc(collection(db, "histories"), {
     user: currentUser.value,
@@ -976,12 +1101,16 @@ const saveToHistory = async () => {
     dateNeeded: dateNeeded.value,
     numberOfDays: numberOfDays.value,
     status: "Pending",
-    rentalDetails: rentalDetails.value,
+    rentalDetails: {
+      ...rentalDetails.value,
+      ...{ id: rentalDetails.value.id },
+    },
     createdAt: serverTimestamp(),
     driversIDFront: image1,
     driversIDBack: image2,
     supportingIDFront: image3,
     supportingIDBack: image4,
+    selfie: image7,
     payment: payment.value,
     paymentType: paymentType.value,
     receiptImage: image5,
@@ -1002,7 +1131,7 @@ const saveToHistory = async () => {
     icon: "check",
     message: "It has been submitted successfully.",
   });
-  isProceedRentLayout.value;
+  isProceedRentLayout.value = false;
   app.$router.push("/history");
   $q.loading.hide();
 };

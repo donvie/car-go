@@ -291,29 +291,35 @@
                         }}</q-item-label>
                       </q-item-section>
                     </q-item>
-                    <q-card>
+                    <q-card class="q-mb-md">
                       <q-card-section>
                         <div class="text-h6">Driver's license Front</div>
                       </q-card-section>
                       <q-img :src="historyDetails.driversIDFront" />
                     </q-card>
-                    <q-card>
+                    <q-card class="q-mb-md">
                       <q-card-section>
                         <div class="text-h6">Driver's license Back</div>
                       </q-card-section>
                       <q-img :src="historyDetails.driversIDBack" />
                     </q-card>
-                    <q-card>
+                    <q-card class="q-mb-md">
                       <q-card-section>
                         <div class="text-h6">Supporting ID Front</div>
                       </q-card-section>
                       <q-img :src="historyDetails.supportingIDFront" />
                     </q-card>
-                    <q-card>
+                    <q-card class="q-mb-md">
                       <q-card-section>
                         <div class="text-h6">Supporting ID Back</div>
                       </q-card-section>
                       <q-img :src="historyDetails.supportingIDBack" />
+                    </q-card>
+                    <q-card class="q-mb-md">
+                      <q-card-section>
+                        <div class="text-h6">Selfie</div>
+                      </q-card-section>
+                      <q-img :src="historyDetails.selfie" />
                     </q-card>
                   </q-list>
                 </q-tab-panel>
@@ -331,6 +337,22 @@
                         <div class="text-h6">Signature</div>
                       </q-card-section>
                       <q-img :src="historyDetails.signature" />
+                    </q-card>
+                    <q-card>
+                      <q-card-section>
+                        <div class="text-h6">Payment</div>
+                      </q-card-section>
+                      <q-card-section>
+                        <div>{{ historyDetails.payment }}</div>
+                      </q-card-section>
+                    </q-card>
+                    <q-card>
+                      <q-card-section>
+                        <div class="text-h6">Payment Type</div>
+                      </q-card-section>
+                      <q-card-section>
+                        <div>{{ historyDetails.paymentType }}</div>
+                      </q-card-section>
                     </q-card>
                   </div>
                 </q-tab-panel>
@@ -464,6 +486,19 @@ const updateStatusSubmit = async () => {
   await updateDoc(rentalsRef, {
     status: historyDetails.value.status,
   });
+
+  const rentals1Ref = doc(db, "rentals", historyDetails.value.rentalDetails.id);
+
+  // Set the "capital" field of the city 'DC'
+  await updateDoc(rentals1Ref, {
+    isAvailable:
+      historyDetails.value.status === "Done" ||
+      historyDetails.value.status === "Cancelled" ||
+      historyDetails.value.status === "Lapsed"
+        ? true
+        : false,
+  });
+
   $q.notify({
     color: "positive",
     icon: "check",
