@@ -50,7 +50,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item to="/tracking" exact>
+        <q-item to="/tracking" exact v-if="currentUser.role === 'admin'">
           <q-item-section side>
             <q-icon name="map" />
           </q-item-section>

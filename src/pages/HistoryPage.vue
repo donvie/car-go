@@ -125,12 +125,18 @@
         <q-footer class="bg-white q-pa-md">
           <q-select
             filled
+            :disable="currentUser.role !== 'admin'"
             v-model="historyDetails.status"
             :options="statusOptions"
             label="Status"
           >
             <template v-slot:after>
-              <q-btn @click="updateStatus()" color="primary" icon="save" />
+              <q-btn
+                v-if="currentUser.role === 'admin'"
+                @click="updateStatus()"
+                color="primary"
+                icon="save"
+              />
             </template>
           </q-select>
         </q-footer>
@@ -159,6 +165,14 @@
                         <q-item-label>Date Needed</q-item-label>
                         <q-item-label caption>{{
                           historyDetails.dateNeeded
+                        }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-item clickable v-ripple>
+                      <q-item-section>
+                        <q-item-label>Rate</q-item-label>
+                        <q-item-label caption>{{
+                          historyDetails.rentalDetails.rate
                         }}</q-item-label>
                       </q-item-section>
                     </q-item>
@@ -303,6 +317,15 @@
                       </q-card-section>
                       <q-img :src="historyDetails.driversIDBack" />
                     </q-card>
+
+                    <q-card class="q-mb-md">
+                      <q-card-section>
+                        <div class="text-h6">Supporting ID</div>
+                      </q-card-section>
+                      <q-card-section
+                        >{{ historyDetails.supportingIDType }}
+                      </q-card-section>
+                    </q-card>
                     <q-card class="q-mb-md">
                       <q-card-section>
                         <div class="text-h6">Supporting ID Front</div>
@@ -326,6 +349,26 @@
 
                 <q-tab-panel name="payments">
                   <div class="q-gutter-md">
+                    <div>
+                      <span class="text-weight-medium">Downpayment:</span> 50%
+                      downpayment to complete the booking. <br />
+                      <span class="text-weight-medium">Final Payment:</span> The
+                      remaining 50% is due upon delivery of the cars on site.
+                      <br /><br />
+                    </div>
+                    <div class="text-right q-mb-md">
+                      <span class="text-h6 q-mr-xs text-weight-bold"
+                        >Total Fee:</span
+                      >
+                      <span class="text-h5 text-positive"
+                        >Php
+                        {{
+                          parseInt(historyDetails?.rentalDetails?.rate) *
+                          parseInt(historyDetails?.numberOfDays)
+                        }}</span
+                      >
+                    </div>
+                    <!-- <pre>{{ historyDetails }}</pre> -->
                     <q-card>
                       <q-card-section>
                         <div class="text-h6">Payment Receipt</div>

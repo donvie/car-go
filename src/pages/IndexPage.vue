@@ -166,13 +166,20 @@
               <q-card-actions align="center" vertical>
                 <div class="q-mb-xs">Pick up time 7:00 am to 12:00 pm</div>
                 <q-btn
-                  v-if="rentalDetails.isAvailable"
+                  v-if="
+                    rentalDetails.isAvailable && currentUser.role !== 'admin'
+                  "
                   @click="isProceedRentLayout = true"
                   color="primary"
                   style="width: 150px"
                   >Rent now</q-btn
                 >
-                <div v-else class="text-red text-h6">Not available</div>
+                <div
+                  v-if="rentalDetails.isAvailable === false"
+                  class="text-red text-h6"
+                >
+                  Not available
+                </div>
               </q-card-actions>
             </q-card>
 
@@ -225,7 +232,7 @@
               dense
               icon="close"
             />
-            <q-toolbar-title></q-toolbar-title>
+            <q-toolbar-title>{{ rentalDetails.vehicleName }}</q-toolbar-title>
           </q-toolbar>
         </q-header>
         <q-footer class="bg-blue-2">
@@ -293,6 +300,31 @@
                         (val && val.length > 0) || 'Field cannot be empty',
                     ]"
                   />
+
+                  <q-field label="Rate" filled stack-label class="q-mb-md">
+                    <template v-slot:control>
+                      <div
+                        class="self-center full-width no-outline"
+                        tabindex="0"
+                      >
+                        {{ rentalDetails?.rate }}
+                      </div>
+                    </template>
+                  </q-field>
+
+                  <div class="text-right">
+                    <span class="text-h5 q-mr-xs">Total:</span>
+                    <span class="text-h6"
+                      >Php
+                      {{
+                        parseInt(rentalDetails?.rate) * parseInt(numberOfDays)
+                      }}</span
+                    >
+                  </div>
+                  <!-- <q-input filled :value="rentalDetails.rate" label="Rate" /> -->
+
+                  <!-- <div>Rate: {{ rentalDetails.rate }}</div> -->
+                  <div class="text-h6 q-mb-sm">User Details</div>
                   <q-input
                     filled
                     v-model="currentUser.firstName"
@@ -385,10 +417,11 @@
                 </q-tab-panel>
 
                 <q-tab-panel name="attachment">
-                  <div class="row q-gutter-md">
+                  <div class="row">
                     <div class="text-h6">Driver's ID</div>
                     <q-uploader
                       accept=".jpg, image/*"
+                      class="q-mb-md"
                       hide-upload-btn
                       label="Front Picture"
                       @added="driversIDFrontAdded"
@@ -398,9 +431,26 @@
                       hide-upload-btn
                       label="Back Picture"
                       @added="driversIDBackAdded"
+                      class="q-mb-md"
                     />
-                    <div class="text-h6">Supporting ID</div>
+                    <div class="text-h6 q-mb-md">Supporting ID</div>
+                    <div class="full-width">
+                      <q-select
+                        filled
+                        class="q-mb-md"
+                        v-model="supportingIDType"
+                        :options="[
+                          'SSS ID',
+                          'NATIONAL ID',
+                          'TIN ID',
+                          'PHIL HEALTH ID',
+                          'PASSPORT ID',
+                        ]"
+                        label="Supporting ID"
+                      />
+                    </div>
                     <q-uploader
+                      class="q-mb-md"
                       accept=".jpg, image/*"
                       hide-upload-btn
                       label="Front Picture"
@@ -408,6 +458,7 @@
                     />
                     <q-uploader
                       accept=".jpg, image/*"
+                      class="q-mb-md"
                       hide-upload-btn
                       label="Back Picture"
                       @added="supportingIDBackAdded"
@@ -419,9 +470,11 @@
                       unelevated
                       icon="camera_enhance"
                       label="Take a selfie"
+                      class="q-mb-md"
                     />
                     <q-img
                       v-if="selfieData"
+                      class="q-mb-md"
                       :src="selfieData"
                       style="height: 220px; max-width: 100%"
                     >
@@ -433,14 +486,37 @@
                         </div>
                       </template>
                     </q-img>
+
+                    <q-card flat>
+                      Note: Confirm your identity with a photo of yourself
+                      holding your ID
+                    </q-card>
                   </div>
                 </q-tab-panel>
 
                 <q-tab-panel name="payment">
                   <div class="row">
                     <div class="text-h6 q-mb-md">Scan the qrcode to pay</div>
+                    <div>
+                      <span class="text-weight-medium">Downpayment:</span> 50%
+                      downpayment to complete the booking. <br />
+                      <span class="text-weight-medium">Final Payment:</span> The
+                      remaining 50% is due upon delivery of the cars on site.
+                      <br /><br />
+                    </div>
                     <q-img class="q-mb-md" src="~assets/image1.jpg" />
                     <q-img class="q-mb-md" src="~assets/image2.jpg" />
+                    <div class="text-right q-my-md">
+                      <span class="text-h6 q-mr-xs text-weight-bold"
+                        >Total Fee:</span
+                      >
+                      <span class="text-h5 text-positive"
+                        >Php
+                        {{
+                          parseInt(rentalDetails?.rate) * parseInt(numberOfDays)
+                        }}</span
+                      >
+                    </div>
                     <q-select
                       class="q-mb-md full-width"
                       filled
@@ -448,6 +524,7 @@
                       :options="['Gcash', 'Paymaya']"
                       label="Payment"
                     />
+
                     <q-select
                       filled
                       class="q-mb-md full-width"
@@ -490,12 +567,7 @@
           and I consent to its use for the purposes of processing the car rental
           reservation . Additionally, I acknowledge that my information will be
           handled with utmost confidentiality and security measures will be
-          implemented to protect it from unauthorized access or disclosure
-          <br /><br />supporting id type <br />SSS ID<br />
-          NATIONAL ID <br />POSTAL ID <br />TIN ID <br />PHIL HEALTH ID
-          <br />PASSPORT ID <br /><br /><br />Note: Confirm your identity with a
-          photo of yourself<br />
-          holding your ID
+          implemented to protect it from unauthorized access or disclosure.
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -637,7 +709,6 @@ import { ref } from "vue";
 defineOptions({
   name: "IndexPage",
 });
-console.log(";rentalsrentals", rentals);
 const storage = getStorage();
 const selfieData = ref(null);
 const selfieData1 = ref(null);
@@ -645,6 +716,7 @@ const basic = ref(false);
 
 const rentalDetails = ref({});
 const addLayout = ref(false);
+const supportingIDType = ref("");
 const isPreviewLayoutOpen = ref(false);
 const isProceedRentLayout = ref(false);
 const auth = useFirebaseAuth();
@@ -657,7 +729,7 @@ const dateNeeded = ref(null);
 const app = getCurrentInstance().appContext.config.globalProperties;
 const search = ref("");
 
-const numberOfDays = ref(null);
+const numberOfDays = ref(1);
 
 let currentUser = ref(LocalStorage.getItem("user"));
 const payment = ref("");
@@ -1108,6 +1180,7 @@ const saveToHistory = async () => {
     createdAt: serverTimestamp(),
     driversIDFront: image1,
     driversIDBack: image2,
+    supportingIDType: supportingIDType.value,
     supportingIDFront: image3,
     supportingIDBack: image4,
     selfie: image7,
