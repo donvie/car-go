@@ -7,7 +7,12 @@
       style="width: 320px"
     >
       <div class="text-h4 text-center">
-        <q-icon name="car_rental" size="96px" color="primary" class="q-mb-xl" />
+        <q-img
+          style="height: auto; width: 96px"
+          class="q-mb-xl"
+          src="~assets/xhdpi.png"
+        />
+        <!-- <q-icon name="car_rental" size="96px" color="primary" class="q-mb-xl" /> -->
         <br />
         Sign In
       </div>

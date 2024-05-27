@@ -2,7 +2,8 @@
   <q-layout view="lHh Lpr lFf" style="background: #c4e6f9">
     <q-header elevated class="q-py-sm">
       <q-toolbar>
-        <q-icon name="car_rental" size="42px" color="white" />
+        <q-img style="height: auto; width: 54px" src="~assets/xhdpi.png" />
+        <!-- <q-icon name="car_rental" size="42px" color="white" /> -->
         <q-toolbar-title> Car go </q-toolbar-title>
         <q-btn
           flat
