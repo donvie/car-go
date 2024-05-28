@@ -228,21 +228,29 @@ async function handleAdded(files) {
 }
 
 const onSubmit = async () => {
-  $q.loading.show({
-    delay: 400, // ms
-  });
-
-  createUserWithEmailAndPassword(auth, email.value, password.value)
-    .then((userCredential) => {
-      $q.loading.hide();
-      addUserDb(userCredential);
-    })
-    .catch((error) => {
-      $q.loading.hide();
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // ..
+  if (confirmPassword.value === password.value) {
+    $q.loading.show({
+      delay: 400, // ms
     });
+
+    createUserWithEmailAndPassword(auth, email.value, password.value)
+      .then((userCredential) => {
+        $q.loading.hide();
+        addUserDb(userCredential);
+      })
+      .catch((error) => {
+        $q.loading.hide();
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
+  } else {
+    $q.notify({
+      color: "red",
+      icon: "close",
+      message: "Password did not match.",
+    });
+  }
 };
 
 console.log("serverTimestamp", serverTimestamp());

@@ -83,7 +83,9 @@
               >Pick up & Drop off San Fernando Pampanga</q-item-label
             >
             <q-item-label caption
-              >Pick up time: 7:00 am to 12:00 pm</q-item-label
+              >Pick up time: 7:00 am to 5:00 pm <br />
+              Note: If you fail to return the vehicle between 7 AM and 5 PM, we
+              will charge an additional fee.</q-item-label
             >
           </q-item-section>
 
@@ -113,7 +115,7 @@
       </q-list>
     </q-card>
 
-    <q-dialog v-model="statusLayout">
+    <q-dialog maximized v-model="statusLayout">
       <q-layout view="Lhh lpR fff" container class="bg-white text-dark">
         <q-header class="bg-primary">
           <q-toolbar>
@@ -358,13 +360,26 @@
                     </div>
                     <div class="text-right q-mb-md">
                       <span class="text-h6 q-mr-xs text-weight-bold"
-                        >Total Fee:</span
+                        >Full payment:</span
                       >
                       <span class="text-h5 text-positive"
                         >Php
                         {{
                           parseInt(historyDetails?.rentalDetails?.rate) *
                           parseInt(historyDetails?.numberOfDays)
+                        }}</span
+                      >
+                    </div>
+                    <div class="text-right q-mb-md">
+                      <span class="text-h6 q-mr-xs text-weight-bold"
+                        >Down payment:</span
+                      >
+                      <span class="text-h5 text-positive"
+                        >Php
+                        {{
+                          (parseInt(historyDetails?.rentalDetails?.rate) *
+                            parseInt(historyDetails?.numberOfDays)) /
+                          2
                         }}</span
                       >
                     </div>

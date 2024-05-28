@@ -21,6 +21,7 @@
         narrow-indicator
       >
         <q-tab name="all" label="All" />
+        <q-tab name="hatchback" label="Hatchback" />
         <q-tab name="suv" label="Suv" />
         <q-tab name="van" label="Van" />
         <q-tab name="sedan" label="Sedan" />
@@ -84,7 +85,9 @@
               >Pick up & Drop off San Fernando Pampanga</q-item-label
             >
             <q-item-label caption
-              >Pick up time: 7:00 am to 12:00 pm</q-item-label
+              >Pick up time: 7:00 am to 5:00 pm <br />
+              Note: If you fail to return the vehicle between 7 AM and 5 PM, we
+              will charge an additional fee.</q-item-label
             >
           </q-item-section>
 
@@ -164,7 +167,11 @@
               </q-card-section>
 
               <q-card-actions align="center" vertical>
-                <div class="q-mb-xs">Pick up time 7:00 am to 12:00 pm</div>
+                <div class="q-mb-xs">Pick up time 7:00 am to 5:00 pm</div>
+                <div class="q-mb-xs" style="width: 300px">
+                  Note: If you fail to return the vehicle between 7 AM and 5 PM,
+                  we will charge an additional fee.
+                </div>
                 <q-btn
                   v-if="
                     rentalDetails.isAvailable && currentUser.role !== 'admin'
@@ -221,7 +228,7 @@
       </q-layout>
     </q-dialog>
 
-    <q-dialog v-model="isProceedRentLayout">
+    <q-dialog maximized v-model="isProceedRentLayout">
       <q-layout view="Lhh lpR fff" container class="bg-white text-dark">
         <q-header class="bg-primary">
           <q-toolbar>
@@ -235,26 +242,344 @@
             <q-toolbar-title>{{ rentalDetails.vehicleName }}</q-toolbar-title>
           </q-toolbar>
         </q-header>
-        <q-footer class="bg-blue-2">
-          <q-toolbar>
-            <q-checkbox
-              @click="isAgree ? (basic = true) : ''"
-              label="Terms of Agreement"
-              class="text-black"
-              v-model="isAgree"
-            />
-            <q-toolbar-title></q-toolbar-title>
-            <q-btn
-              :disable="!isAgree"
-              @click="rentNow()"
-              label="Proceed"
-              color="primary"
-            />
-          </q-toolbar>
-        </q-footer>
         <q-page-container>
           <q-page padding>
-            <q-card>
+            <q-stepper
+              keep-alive
+              dense
+              vertical
+              v-model="step"
+              ref="stepper"
+              color="primary"
+              animated
+            >
+              <q-step :name="1" title="Details" :done="step > 1">
+                <q-input
+                  filled
+                  type="date"
+                  v-model="dateNeeded"
+                  label="Date Needed"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+                <q-input
+                  filled
+                  type="number"
+                  v-model="numberOfDays"
+                  label="Number of days"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-field label="Rate" filled stack-label class="q-mb-md">
+                  <template v-slot:control>
+                    <div class="self-center full-width no-outline" tabindex="0">
+                      {{ rentalDetails?.rate }}
+                    </div>
+                  </template>
+                </q-field>
+
+                <div class="text-right">
+                  <span class="text-h5 q-mr-xs">Down payment:</span>
+                  <span class="text-h6"
+                    >Php
+                    {{
+                      (parseInt(rentalDetails?.rate) * parseInt(numberOfDays)) /
+                      2
+                    }}</span
+                  >
+                </div>
+                <div class="text-right">
+                  <span class="text-h5 q-mr-xs">Full payment:</span>
+                  <span class="text-h6"
+                    >Php
+                    {{
+                      parseInt(rentalDetails?.rate) * parseInt(numberOfDays)
+                    }}</span
+                  >
+                </div>
+                <!-- <q-input filled :value="rentalDetails.rate" label="Rate" /> -->
+
+                <!-- <div>Rate: {{ rentalDetails.rate }}</div> -->
+                <div class="text-h6 q-mb-sm">User Details</div>
+                <q-input
+                  filled
+                  v-model="currentUser.firstName"
+                  label="First Name"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-input
+                  filled
+                  v-model="currentUser.middleName"
+                  label="Middle Name"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-input
+                  filled
+                  v-model="currentUser.lastName"
+                  label="Last Name"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-input
+                  filled
+                  v-model="currentUser.address"
+                  label="Address"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-input
+                  filled
+                  type="email"
+                  v-model="currentUser.email"
+                  label="Email"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Email cannot be empty',
+                  ]"
+                />
+
+                <q-input
+                  filled
+                  v-model="currentUser.nationality"
+                  label="Nationality"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-input
+                  filled
+                  type="date"
+                  v-model="currentUser.dateOfBirth"
+                  label="Date of Birth"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-input
+                  filled
+                  v-model="currentUser.phoneNumber"
+                  label="Phone Number"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+              </q-step>
+
+              <q-step :name="2" title="Attachments" :done="step > 2">
+                <div class="row">
+                  <div class="text-h6">Driver's ID</div>
+                  <q-uploader
+                    accept=".jpg, image/*"
+                    class="q-mb-md"
+                    hide-upload-btn
+                    label="Front Picture"
+                    @added="driversIDFrontAdded"
+                  />
+                  <q-uploader
+                    accept=".jpg, image/*"
+                    hide-upload-btn
+                    label="Back Picture"
+                    @added="driversIDBackAdded"
+                    class="q-mb-md"
+                  />
+                  <div class="text-h6 q-mb-md">Supporting ID</div>
+                  <div class="full-width">
+                    <q-select
+                      filled
+                      class="q-mb-md"
+                      v-model="supportingIDType"
+                      :options="[
+                        'SSS ID',
+                        'NATIONAL ID',
+                        'TIN ID',
+                        'PHIL HEALTH ID',
+                        'PASSPORT ID',
+                      ]"
+                      label="Supporting ID"
+                    />
+                  </div>
+                  <q-uploader
+                    class="q-mb-md"
+                    accept=".jpg, image/*"
+                    hide-upload-btn
+                    label="Front Picture"
+                    @added="supportingIDFrontAdded"
+                  />
+                  <q-uploader
+                    accept=".jpg, image/*"
+                    class="q-mb-md"
+                    hide-upload-btn
+                    label="Back Picture"
+                    @added="supportingIDBackAdded"
+                  />
+                  <q-btn
+                    color="primary"
+                    glossy
+                    @click="takePicture()"
+                    unelevated
+                    icon="camera_enhance"
+                    label="Take a selfie"
+                    class="q-mb-md"
+                  />
+                  <q-img
+                    v-if="selfieData"
+                    class="q-mb-md"
+                    :src="selfieData"
+                    style="height: 220px; max-width: 100%"
+                  >
+                    <template v-slot:error>
+                      <div
+                        class="absolute-full flex flex-center bg-negative text-white"
+                      >
+                        Please take a selfie.
+                      </div>
+                    </template>
+                  </q-img>
+
+                  <q-card flat>
+                    Note: Confirm your identity with a photo of yourself holding
+                    your ID
+                  </q-card>
+                </div>
+              </q-step>
+
+              <q-step :name="3" title="Payment/Signature">
+                <div class="row">
+                  <div class="text-h6 q-mb-md">Scan the qrcode to pay</div>
+                  <div>
+                    <span class="text-weight-medium">Downpayment:</span> 50%
+                    downpayment to complete the booking. <br />
+                    <span class="text-weight-medium">Final Payment:</span> The
+                    remaining 50% is due upon delivery of the cars on site.
+                    <br /><br />
+                  </div>
+                  <q-img class="q-mb-md" src="~assets/image1.jpg" />
+                  <q-img class="q-mb-md" src="~assets/image2.jpg" />
+                  <q-select
+                    class="q-mb-md full-width"
+                    filled
+                    v-model="payment"
+                    :options="['Gcash', 'Paymaya']"
+                    label="Payment"
+                  />
+
+                  <q-select
+                    filled
+                    class="q-mb-md full-width"
+                    v-model="paymentType"
+                    :options="['Full payment', 'Down payment']"
+                    label="Payment Type"
+                  />
+                  <q-uploader
+                    accept=".jpg, image/*"
+                    hide-upload-btn
+                    class="q-mb-md"
+                    label="Upload the receipt"
+                    @added="receiptAdded"
+                  />
+                  <div class="text-right q-mb-md">
+                    <span class="text-h6 q-mr-xs text-weight-bold"
+                      >Down payment:</span
+                    >
+                    <span class="text-h5 text-positive"
+                      >Php
+                      {{
+                        (parseInt(rentalDetails?.rate) *
+                          parseInt(numberOfDays)) /
+                        2
+                      }}</span
+                    >
+                  </div>
+                  <div class="text-right q-mb-md">
+                    <span class="text-h6 q-mr-xs text-weight-bold"
+                      >Full payment:</span
+                    >
+                    <span class="text-h5 text-positive"
+                      >Php
+                      {{
+                        parseInt(rentalDetails?.rate) * parseInt(numberOfDays)
+                      }}</span
+                    >
+                  </div>
+                  <div class="text-h6">Draw your signature</div>
+                  <q-btn
+                    class="q-mb-md"
+                    icon="delete"
+                    color="red"
+                    @click="signature1.clear()"
+                    dense
+                    label="Clear signature"
+                  />
+                  <q-card style="z-index: 99999">
+                    <Vue3Signature
+                      ref="signature1"
+                      :h="'200px'"
+                      :sigOption="state.option"
+                      :disabled="state.disabled"
+                    ></Vue3Signature>
+                  </q-card>
+                  <q-checkbox
+                    @click="isAgree ? (basic = true) : ''"
+                    label="Terms of Agreement"
+                    class="text-black q-mt-md"
+                    v-model="isAgree"
+                  />
+                </div>
+              </q-step>
+
+              <template v-slot:navigation>
+                <q-stepper-navigation>
+                  <q-btn
+                    v-if="step === 3"
+                    :disable="!isAgree"
+                    @click="step === 3 ? rentNow() : $refs.stepper.next()"
+                    color="primary"
+                    :label="step === 3 ? 'Finish' : 'Continue'"
+                  />
+
+                  <q-btn
+                    v-else
+                    @click="step === 3 ? rentNow() : $refs.stepper.next()"
+                    color="primary"
+                    :label="step === 3 ? 'Finish' : 'Continue'"
+                  />
+                  <q-btn
+                    v-if="step > 1"
+                    flat
+                    color="primary"
+                    @click="$refs.stepper.previous()"
+                    label="Back"
+                    class="q-ml-sm"
+                  />
+                </q-stepper-navigation>
+              </template>
+            </q-stepper>
+
+            <!-- <q-card>
               <q-tabs
                 v-model="tab1"
                 dense
@@ -277,281 +602,13 @@
                 animated
                 class="shadow-2 rounded-borders"
               >
-                <q-tab-panel name="details">
-                  <q-input
-                    filled
-                    type="date"
-                    v-model="dateNeeded"
-                    label="Date Needed"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-                  <q-input
-                    filled
-                    type="number"
-                    v-model="numberOfDays"
-                    label="Number of days"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
+                <q-tab-panel name="details"> </q-tab-panel>
 
-                  <q-field label="Rate" filled stack-label class="q-mb-md">
-                    <template v-slot:control>
-                      <div
-                        class="self-center full-width no-outline"
-                        tabindex="0"
-                      >
-                        {{ rentalDetails?.rate }}
-                      </div>
-                    </template>
-                  </q-field>
+                <q-tab-panel name="attachment"> </q-tab-panel>
 
-                  <div class="text-right">
-                    <span class="text-h5 q-mr-xs">Total:</span>
-                    <span class="text-h6"
-                      >Php
-                      {{
-                        parseInt(rentalDetails?.rate) * parseInt(numberOfDays)
-                      }}</span
-                    >
-                  </div>
-                  <!-- <q-input filled :value="rentalDetails.rate" label="Rate" /> -->
-
-                  <!-- <div>Rate: {{ rentalDetails.rate }}</div> -->
-                  <div class="text-h6 q-mb-sm">User Details</div>
-                  <q-input
-                    filled
-                    v-model="currentUser.firstName"
-                    label="First Name"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-
-                  <q-input
-                    filled
-                    v-model="currentUser.middleName"
-                    label="Middle Name"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-
-                  <q-input
-                    filled
-                    v-model="currentUser.lastName"
-                    label="Last Name"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-
-                  <q-input
-                    filled
-                    v-model="currentUser.address"
-                    label="Address"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-
-                  <q-input
-                    filled
-                    type="email"
-                    v-model="currentUser.email"
-                    label="Email"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Email cannot be empty',
-                    ]"
-                  />
-
-                  <q-input
-                    filled
-                    v-model="currentUser.nationality"
-                    label="Nationality"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-
-                  <q-input
-                    filled
-                    type="date"
-                    v-model="currentUser.dateOfBirth"
-                    label="Date of Birth"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-
-                  <q-input
-                    filled
-                    v-model="currentUser.phoneNumber"
-                    label="Phone Number"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && val.length > 0) || 'Field cannot be empty',
-                    ]"
-                  />
-                </q-tab-panel>
-
-                <q-tab-panel name="attachment">
-                  <div class="row">
-                    <div class="text-h6">Driver's ID</div>
-                    <q-uploader
-                      accept=".jpg, image/*"
-                      class="q-mb-md"
-                      hide-upload-btn
-                      label="Front Picture"
-                      @added="driversIDFrontAdded"
-                    />
-                    <q-uploader
-                      accept=".jpg, image/*"
-                      hide-upload-btn
-                      label="Back Picture"
-                      @added="driversIDBackAdded"
-                      class="q-mb-md"
-                    />
-                    <div class="text-h6 q-mb-md">Supporting ID</div>
-                    <div class="full-width">
-                      <q-select
-                        filled
-                        class="q-mb-md"
-                        v-model="supportingIDType"
-                        :options="[
-                          'SSS ID',
-                          'NATIONAL ID',
-                          'TIN ID',
-                          'PHIL HEALTH ID',
-                          'PASSPORT ID',
-                        ]"
-                        label="Supporting ID"
-                      />
-                    </div>
-                    <q-uploader
-                      class="q-mb-md"
-                      accept=".jpg, image/*"
-                      hide-upload-btn
-                      label="Front Picture"
-                      @added="supportingIDFrontAdded"
-                    />
-                    <q-uploader
-                      accept=".jpg, image/*"
-                      class="q-mb-md"
-                      hide-upload-btn
-                      label="Back Picture"
-                      @added="supportingIDBackAdded"
-                    />
-                    <q-btn
-                      color="primary"
-                      glossy
-                      @click="takePicture()"
-                      unelevated
-                      icon="camera_enhance"
-                      label="Take a selfie"
-                      class="q-mb-md"
-                    />
-                    <q-img
-                      v-if="selfieData"
-                      class="q-mb-md"
-                      :src="selfieData"
-                      style="height: 220px; max-width: 100%"
-                    >
-                      <template v-slot:error>
-                        <div
-                          class="absolute-full flex flex-center bg-negative text-white"
-                        >
-                          Please take a selfie.
-                        </div>
-                      </template>
-                    </q-img>
-
-                    <q-card flat>
-                      Note: Confirm your identity with a photo of yourself
-                      holding your ID
-                    </q-card>
-                  </div>
-                </q-tab-panel>
-
-                <q-tab-panel name="payment">
-                  <div class="row">
-                    <div class="text-h6 q-mb-md">Scan the qrcode to pay</div>
-                    <div>
-                      <span class="text-weight-medium">Downpayment:</span> 50%
-                      downpayment to complete the booking. <br />
-                      <span class="text-weight-medium">Final Payment:</span> The
-                      remaining 50% is due upon delivery of the cars on site.
-                      <br /><br />
-                    </div>
-                    <q-img class="q-mb-md" src="~assets/image1.jpg" />
-                    <q-img class="q-mb-md" src="~assets/image2.jpg" />
-                    <div class="text-right q-my-md">
-                      <span class="text-h6 q-mr-xs text-weight-bold"
-                        >Total Fee:</span
-                      >
-                      <span class="text-h5 text-positive"
-                        >Php
-                        {{
-                          parseInt(rentalDetails?.rate) * parseInt(numberOfDays)
-                        }}</span
-                      >
-                    </div>
-                    <q-select
-                      class="q-mb-md full-width"
-                      filled
-                      v-model="payment"
-                      :options="['Gcash', 'Paymaya']"
-                      label="Payment"
-                    />
-
-                    <q-select
-                      filled
-                      class="q-mb-md full-width"
-                      v-model="paymentType"
-                      :options="['Full payment', 'Down payment']"
-                      label="Payment Type"
-                    />
-                    <q-uploader
-                      accept=".jpg, image/*"
-                      hide-upload-btn
-                      class="q-mb-md"
-                      label="Upload the receipt"
-                      @added="receiptAdded"
-                    />
-                    <div class="text-h6">Draw your signature</div>
-                    <q-card style="z-index: 99999">
-                      <Vue3Signature
-                        ref="signature1"
-                        :h="'200px'"
-                        :sigOption="state.option"
-                        :disabled="state.disabled"
-                      ></Vue3Signature>
-                    </q-card>
-                  </div>
-                </q-tab-panel>
+                <q-tab-panel name="payment"> </q-tab-panel>
               </q-tab-panels>
-            </q-card>
+            </q-card> -->
           </q-page>
         </q-page-container>
       </q-layout>
@@ -624,6 +681,7 @@
                 'suv',
                 'van',
                 'sedan',
+                'hatchback',
                 'luxury',
                 'special',
                 'hatchback',
@@ -710,50 +768,48 @@ defineOptions({
   name: "IndexPage",
 });
 const storage = getStorage();
-const selfieData = ref(null);
-const selfieData1 = ref(null);
 const basic = ref(false);
-
 const rentalDetails = ref({});
 const addLayout = ref(false);
-const supportingIDType = ref("");
 const isPreviewLayoutOpen = ref(false);
 const isProceedRentLayout = ref(false);
 const auth = useFirebaseAuth();
 const tab = ref("all");
 const tab1 = ref("details");
 const $q = useQuasar();
-const isAgree = ref(false);
 
-const dateNeeded = ref(null);
 const app = getCurrentInstance().appContext.config.globalProperties;
 const search = ref("");
-
-const numberOfDays = ref(1);
-
 let currentUser = ref(LocalStorage.getItem("user"));
+
+const isAgree = ref(false);
+
+const selfieData = ref(null);
+const selfieData1 = ref(null);
+const supportingIDType = ref("");
+const numberOfDays = ref(1);
 const payment = ref("");
 const paymentType = ref("");
-
 const vehicleName = ref("");
 const typeOfVehicle = ref("");
+const dateNeeded = ref(null);
 const seaters = ref("");
 const gasType = ref("");
 const description = ref("");
 const airConditioned = ref("");
 const rate = ref("");
 const transmission = ref("");
-const action = ref("");
-
 const driversIDFront = ref(null);
 const driversIDBack = ref(null);
 const supportingIDFront = ref(null);
 const supportingIDBack = ref(null);
 const selfiefetchdownloadURL = ref(null);
 const receipt = ref(null);
+const signature1 = ref(null);
 const file = ref("");
 
-const signature1 = ref(null);
+const action = ref("");
+const step = ref(1);
 
 const state = reactive({
   count: 0,
@@ -1006,25 +1062,46 @@ const filterRentals = computed(() => {
 });
 
 const rentNow = () => {
-  $q.dialog({
-    title: "Confirm",
-    message: "Are you sure you want to proceed?",
-    cancel: true,
-    persistent: true,
-  })
-    .onOk(() => {
-      // console.log('>>>> OK')
-      saveToHistory();
+  if (
+    paymentType.value &&
+    payment.value &&
+    dateNeeded.value &&
+    numberOfDays.value &&
+    driversIDFront.value &&
+    driversIDBack.value &&
+    supportingIDFront.value &&
+    supportingIDBack.value &&
+    signature1.value &&
+    selfiefetchdownloadURL.value &&
+    receipt.value
+  ) {
+    $q.dialog({
+      title: "Confirm",
+      message: "Are you sure you want to proceed?",
+      cancel: true,
+      persistent: true,
     })
-    .onOk(() => {
-      // console.log('>>>> second OK catcher')
-    })
-    .onCancel(() => {
-      // console.log('>>>> Cancel')
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
+      .onOk(() => {
+        // console.log('>>>> OK')
+        saveToHistory();
+      })
+      .onOk(() => {
+        // console.log('>>>> second OK catcher')
+      })
+      .onCancel(() => {
+        // console.log('>>>> Cancel')
+      })
+      .onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+  } else {
+    $q.notify({
+      position: "top",
+      color: "negative",
+      icon: "close",
+      message: "Fill out all fields.",
     });
+  }
 };
 
 const driversIDFrontFetch = async () => {
@@ -1204,6 +1281,19 @@ const saveToHistory = async () => {
     icon: "check",
     message: "It has been submitted successfully.",
   });
+
+  paymentType.value = "";
+  payment.value = "";
+  dateNeeded.value = null;
+  numberOfDays.value = 1;
+  driversIDFront.value = null;
+  driversIDBack.value = null;
+  supportingIDFront.value = null;
+  supportingIDBack.value = null;
+  signature1.value = null;
+  selfiefetchdownloadURL.value = null;
+  receipt.value = null;
+
   isProceedRentLayout.value = false;
   app.$router.push("/history");
   $q.loading.hide();
