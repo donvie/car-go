@@ -435,22 +435,68 @@
               </q-step>
 
               <q-step :name="2" title="Attachments" :done="step > 2">
-                <div class="row">
+                <div>
                   <div class="text-h6">Driver's ID</div>
-                  <q-uploader
+                  <!-- <q-uploader
                     accept=".jpg, image/*"
                     class="q-mb-md"
                     hide-upload-btn
                     label="Front Picture"
                     @added="driversIDFrontAdded"
+                  /> -->
+                  <q-btn
+                    color="primary"
+                    glossy
+                    @click="takePicture1()"
+                    unelevated
+                    icon="camera_enhance"
+                    label="Front Picture"
+                    class="q-mb-md"
                   />
-                  <q-uploader
+                  <q-img
+                    v-if="selfieData2"
+                    class="q-mb-md"
+                    :src="selfieData2"
+                    style="height: 220px; max-width: 100%"
+                  >
+                    <template v-slot:error>
+                      <div
+                        class="absolute-full flex flex-center bg-negative text-white"
+                      >
+                        Please take a selfie.
+                      </div>
+                    </template>
+                  </q-img>
+                  <q-btn
+                    color="primary"
+                    glossy
+                    @click="takePicture2()"
+                    unelevated
+                    icon="camera_enhance"
+                    label="Back Picture"
+                    class="q-mb-md"
+                  />
+                  <q-img
+                    v-if="selfieData4"
+                    class="q-mb-md"
+                    :src="selfieData4"
+                    style="height: 220px; max-width: 100%"
+                  >
+                    <template v-slot:error>
+                      <div
+                        class="absolute-full flex flex-center bg-negative text-white"
+                      >
+                        Please take a selfie.
+                      </div>
+                    </template>
+                  </q-img>
+                  <!-- <q-uploader
                     accept=".jpg, image/*"
                     hide-upload-btn
                     label="Back Picture"
                     @added="driversIDBackAdded"
                     class="q-mb-md"
-                  />
+                  /> -->
                   <div class="text-h6 q-mb-md">Supporting ID</div>
                   <div class="full-width">
                     <q-select
@@ -467,20 +513,67 @@
                       label="Supporting ID"
                     />
                   </div>
-                  <q-uploader
+                  <!-- <q-uploader
                     class="q-mb-md"
                     accept=".jpg, image/*"
                     hide-upload-btn
                     label="Front Picture"
                     @added="supportingIDFrontAdded"
+                  /> -->
+                  <q-btn
+                    color="primary"
+                    glossy
+                    @click="takePicture3()"
+                    unelevated
+                    icon="camera_enhance"
+                    label="Front Picture"
+                    class="q-mb-md"
                   />
-                  <q-uploader
+                  <q-img
+                    v-if="selfieData6"
+                    class="q-mb-md"
+                    :src="selfieData6"
+                    style="height: 220px; max-width: 100%"
+                  >
+                    <template v-slot:error>
+                      <div
+                        class="absolute-full flex flex-center bg-negative text-white"
+                      >
+                        Please take a selfie.
+                      </div>
+                    </template>
+                  </q-img>
+
+                  <q-btn
+                    color="primary"
+                    glossy
+                    @click="takePicture4()"
+                    unelevated
+                    icon="camera_enhance"
+                    label="Back Picture"
+                    class="q-mb-md"
+                  />
+                  <q-img
+                    v-if="selfieData8"
+                    class="q-mb-md"
+                    :src="selfieData8"
+                    style="height: 220px; max-width: 100%"
+                  >
+                    <template v-slot:error>
+                      <div
+                        class="absolute-full flex flex-center bg-negative text-white"
+                      >
+                        Please take a selfie.
+                      </div>
+                    </template>
+                  </q-img>
+                  <!-- <q-uploader
                     accept=".jpg, image/*"
                     class="q-mb-md"
                     hide-upload-btn
                     label="Back Picture"
                     @added="supportingIDBackAdded"
-                  />
+                  /> -->
                   <q-btn
                     color="primary"
                     glossy
@@ -833,6 +926,15 @@ const isAgree = ref(false);
 
 const selfieData = ref(null);
 const selfieData1 = ref(null);
+const selfieData2 = ref(null);
+const selfieData3 = ref(null);
+const selfieData4 = ref(null);
+const selfieData5 = ref(null);
+const selfieData6 = ref(null);
+const selfieData7 = ref(null);
+const selfieData8 = ref(null);
+const selfieData9 = ref(null);
+
 const supportingIDType = ref("");
 const numberOfDays = ref(1);
 const payment = ref("");
@@ -851,6 +953,10 @@ const driversIDBack = ref(null);
 const supportingIDFront = ref(null);
 const supportingIDBack = ref(null);
 const selfiefetchdownloadURL = ref(null);
+const selfiefetchdownloadURL1 = ref(null);
+const selfiefetchdownloadURL2 = ref(null);
+const selfiefetchdownloadURL3 = ref(null);
+const selfiefetchdownloadURL4 = ref(null);
 const receipt = ref(null);
 const signature1 = ref(null);
 const file = ref("");
@@ -944,6 +1050,194 @@ const takePicture = async () => {
       // Get the download URL
       const downloadURL = await getDownloadURL(snapshot.ref);
       selfiefetchdownloadURL.value = downloadURL;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+    }
+  }
+};
+
+const takePicture1 = async () => {
+  navigator.camera.getPicture(onSuccess, onFail, {
+    quality: 50,
+    destinationType: Camera.DestinationType.DATA_URL,
+  });
+
+  function onSuccess(imageDataUri) {
+    // Call an async function to handle the async operations
+    handleImageUpload(imageDataUri);
+  }
+
+  function onFail(message) {}
+
+  async function handleImageUpload(imageDataUri) {
+    try {
+      // Prepare the image data
+      const imageData = "data:image/jpeg;base64," + imageDataUri;
+      const rawImageData = imageDataUri;
+      selfieData2.value = imageData;
+      selfieData3.value = rawImageData;
+
+      // Generate unique ID for the image file name
+      const uniqueId = uid();
+      const fileName = `${uniqueId.slice(-12)}-selfie.jpg`;
+
+      // Convert base64 to Blob
+      const contentType = "image/jpeg"; // Ensure this matches your image format
+      const blob = base64ToBlob(rawImageData, contentType);
+
+      // Define storage reference and metadata
+      const storageRef1 = storageRef(storage, fileName);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+
+      // Upload the image
+      const snapshot = await uploadBytes(storageRef1, blob, metadata);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      selfiefetchdownloadURL1.value = downloadURL;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+    }
+  }
+};
+
+const takePicture2 = async () => {
+  navigator.camera.getPicture(onSuccess, onFail, {
+    quality: 50,
+    destinationType: Camera.DestinationType.DATA_URL,
+  });
+
+  function onSuccess(imageDataUri) {
+    // Call an async function to handle the async operations
+    handleImageUpload(imageDataUri);
+  }
+
+  function onFail(message) {}
+
+  async function handleImageUpload(imageDataUri) {
+    try {
+      // Prepare the image data
+      const imageData = "data:image/jpeg;base64," + imageDataUri;
+      const rawImageData = imageDataUri;
+      selfieData4.value = imageData;
+      selfieData5.value = rawImageData;
+
+      // Generate unique ID for the image file name
+      const uniqueId = uid();
+      const fileName = `${uniqueId.slice(-12)}-selfie.jpg`;
+
+      // Convert base64 to Blob
+      const contentType = "image/jpeg"; // Ensure this matches your image format
+      const blob = base64ToBlob(rawImageData, contentType);
+
+      // Define storage reference and metadata
+      const storageRef1 = storageRef(storage, fileName);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+
+      // Upload the image
+      const snapshot = await uploadBytes(storageRef1, blob, metadata);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      selfiefetchdownloadURL2.value = downloadURL;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+    }
+  }
+};
+
+const takePicture3 = async () => {
+  navigator.camera.getPicture(onSuccess, onFail, {
+    quality: 50,
+    destinationType: Camera.DestinationType.DATA_URL,
+  });
+
+  function onSuccess(imageDataUri) {
+    // Call an async function to handle the async operations
+    handleImageUpload(imageDataUri);
+  }
+
+  function onFail(message) {}
+
+  async function handleImageUpload(imageDataUri) {
+    try {
+      // Prepare the image data
+      const imageData = "data:image/jpeg;base64," + imageDataUri;
+      const rawImageData = imageDataUri;
+      selfieData6.value = imageData;
+      selfieData7.value = rawImageData;
+
+      // Generate unique ID for the image file name
+      const uniqueId = uid();
+      const fileName = `${uniqueId.slice(-12)}-selfie.jpg`;
+
+      // Convert base64 to Blob
+      const contentType = "image/jpeg"; // Ensure this matches your image format
+      const blob = base64ToBlob(rawImageData, contentType);
+
+      // Define storage reference and metadata
+      const storageRef1 = storageRef(storage, fileName);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+
+      // Upload the image
+      const snapshot = await uploadBytes(storageRef1, blob, metadata);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      selfiefetchdownloadURL3.value = downloadURL;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+    }
+  }
+};
+
+const takePicture4 = async () => {
+  navigator.camera.getPicture(onSuccess, onFail, {
+    quality: 50,
+    destinationType: Camera.DestinationType.DATA_URL,
+  });
+
+  function onSuccess(imageDataUri) {
+    // Call an async function to handle the async operations
+    handleImageUpload(imageDataUri);
+  }
+
+  function onFail(message) {}
+
+  async function handleImageUpload(imageDataUri) {
+    try {
+      // Prepare the image data
+      const imageData = "data:image/jpeg;base64," + imageDataUri;
+      const rawImageData = imageDataUri;
+      selfieData8.value = imageData;
+      selfieData9.value = rawImageData;
+
+      // Generate unique ID for the image file name
+      const uniqueId = uid();
+      const fileName = `${uniqueId.slice(-12)}-selfie.jpg`;
+
+      // Convert base64 to Blob
+      const contentType = "image/jpeg"; // Ensure this matches your image format
+      const blob = base64ToBlob(rawImageData, contentType);
+
+      // Define storage reference and metadata
+      const storageRef1 = storageRef(storage, fileName);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+
+      // Upload the image
+      const snapshot = await uploadBytes(storageRef1, blob, metadata);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      selfiefetchdownloadURL4.value = downloadURL;
     } catch (error) {
       console.error("Error uploading image: ", error);
     }
@@ -1129,12 +1423,16 @@ const rentNow = () => {
     payment.value &&
     dateNeeded.value &&
     numberOfDays.value &&
-    driversIDFront.value &&
-    driversIDBack.value &&
-    supportingIDFront.value &&
-    supportingIDBack.value &&
+    // driversIDFront.value &&
+    // driversIDBack.value &&
+    // supportingIDFront.value &&
+    // supportingIDBack.value &&
     signature1.value &&
     selfiefetchdownloadURL.value &&
+    selfiefetchdownloadURL1.value &&
+    selfiefetchdownloadURL2.value &&
+    selfiefetchdownloadURL3.value &&
+    selfiefetchdownloadURL4.value &&
     receipt.value
   ) {
     $q.dialog({
@@ -1250,27 +1548,6 @@ const signatureFetch = async () => {
   return downloadURL;
 };
 
-const selfieFetch = async () => {
-  let uid4 = uid();
-  const data = selfieData.value;
-  const metadata = {
-    contentType: "image/jpeg",
-  };
-
-  const base64DataWithoutPrefix = selfieData1.value;
-
-  const base64String = base64DataWithoutPrefix;
-  const contentType = "image/png"; // or the appropriate content type for your data
-  const blob = base64ToBlob(base64String, contentType);
-
-  const storageRef1 = storageRef(storage, `${uid4.slice(-12)}-selfie.jpg`);
-  const snapshot = await uploadBytes(storageRef1, blob, metadata);
-
-  const downloadURL = await getDownloadURL(snapshot.ref);
-  selfiefetchdownloadURL.value = downloadURL;
-  return downloadURL;
-};
-
 function base64ToBlob(base64String, contentType) {
   const byteCharacters = atob(base64String);
   const byteNumbers = new Array(byteCharacters.length);
@@ -1298,10 +1575,14 @@ const saveToHistory = async () => {
   $q.loading.show({
     delay: 400, // ms
   });
-  const image1 = await driversIDFrontFetch();
-  const image2 = await driversIDBackFetch();
-  const image3 = await supportingIDFrontFetch();
-  const image4 = await supportingIDBackFetch();
+  // const image1 = await driversIDFrontFetch();
+  // const image2 = await driversIDBackFetch();
+  // const image3 = await supportingIDFrontFetch();
+  // const image4 = await supportingIDBackFetch();  const image1 = await driversIDFrontFetch();
+  const image1 = selfiefetchdownloadURL1.value;
+  const image2 = selfiefetchdownloadURL2.value;
+  const image3 = selfiefetchdownloadURL3.value;
+  const image4 = selfiefetchdownloadURL4.value;
   const image5 = await receiptFetch();
   const image6 = await signatureFetch();
   let image7 = selfiefetchdownloadURL.value;
@@ -1348,12 +1629,16 @@ const saveToHistory = async () => {
   payment.value = "";
   dateNeeded.value = null;
   numberOfDays.value = 1;
-  driversIDFront.value = null;
-  driversIDBack.value = null;
-  supportingIDFront.value = null;
-  supportingIDBack.value = null;
+  // driversIDFront.value = null;
+  // driversIDBack.value = null;
+  // supportingIDFront.value = null;
+  // supportingIDBack.value = null;
   signature1.value = null;
   selfiefetchdownloadURL.value = null;
+  selfiefetchdownloadURL1.value = null;
+  selfiefetchdownloadURL2.value = null;
+  selfiefetchdownloadURL3.value = null;
+  selfiefetchdownloadURL4.value = null;
   receipt.value = null;
 
   isProceedRentLayout.value = false;
