@@ -18,10 +18,10 @@
       >
         <q-tab name="All" label="All" />
         <q-tab name="Pending" label="Pending" />
-        <q-tab name="Ongoing" label="Ongoing" />
+        <q-tab @click="checkIfLapsed()" name="Ongoing" label="Ongoing" />
         <q-tab name="Done" label="Done" />
         <q-tab name="Cancelled" label="Cancelled" />
-        <q-tab name="Lapsed" label="Lapsed" />
+        <q-tab @click="checkIfLapsed()" name="Lapsed" label="Lapsed" />
       </q-tabs>
 
       <q-list bordered v-if="filterRentals.length === 0" class="q-mt-md">
@@ -437,7 +437,7 @@ import {
   where,
   query,
 } from "firebase/firestore";
-
+import { date } from "quasar";
 import { LocalStorage } from "quasar";
 import { useQuasar } from "quasar";
 const db = useFirestore();
@@ -471,7 +471,8 @@ if (currentUser.role === "admin") {
   rentals = useCollection(collection(db, "histories"));
 } else {
   rentals = useCollection(
-    query(collection(db, "histories"), where("user.uid", "==", currentUser.uid))
+    // query(collection(db, "histories"), where("user.uid", "==", currentUser.uid))
+    query(collection(db, "histories"))
   );
 }
 
@@ -495,7 +496,41 @@ const searchItems = () => {
 };
 
 // const dateOfReturn = ref(null);
-onMounted(() => {});
+onMounted(() => {
+  checkIfLapsed();
+});
+
+function checkIfLapsed() {
+  const timeStamp = Date.now();
+  rentals.value.forEach((element) => {
+    console.log("eee", element);
+
+    // Example usage:
+    const initialDate = element.dateNeeded;
+    const numberOfDays = parseInt(element.numberOfDays) + 1;
+    const newDate = addDaysToDate(initialDate, numberOfDays);
+    console.log("Date today", date.formatDate(timeStamp, "YYYY/MM/DD"));
+    console.log("Date needed", newDate);
+    console.log("asssd", newDate > date.formatDate(timeStamp, "YYYY-MM-DD")); // Output: 2024-05-09
+    if (
+      newDate > date.formatDate(timeStamp, "YYYY-MM-DD") &&
+      (element.status === "Pending" || element.status === "Ongoing")
+    ) {
+      updateStatusSubmit1(element);
+    }
+  });
+}
+
+function addDaysToDate(dateString, numberOfDays) {
+  const date = new Date(dateString);
+  date.setDate(date.getDate() + numberOfDays);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed, so we add 1
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 const rentNow = () => {
   $q.dialog({
@@ -537,6 +572,20 @@ const updateStatus = () => {
     .onDismiss(() => {
       // console.log('I am triggered on both OK and Cancel')
     });
+};
+
+const updateStatusSubmit1 = async (element) => {
+  const rentalsRef = doc(db, "histories", element.id);
+  await updateDoc(rentalsRef, {
+    status: "Lapsed",
+  });
+
+  // const rentals1Ref = doc(db, "rentals", historyDetails.value.rentalDetails.id);
+
+  // Set the "capital" field of the city 'DC'
+  // await updateDoc(rentals1Ref, {
+  //   isAvailable: true,
+  // });
 };
 
 const updateStatusSubmit = async () => {

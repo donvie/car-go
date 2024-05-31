@@ -11,7 +11,8 @@
         <q-item-section>
           <q-item-label
             >{{ currentUser.firstName }} {{ currentUser.middleName }}
-            {{ currentUser.lastName }}</q-item-label
+            {{ currentUser.lastName }}
+            {{ currentUser.suffixName }}</q-item-label
           >
         </q-item-section>
       </q-item>
@@ -25,6 +26,12 @@
         <q-item-section>
           <q-item-label>Email</q-item-label>
           <q-item-label caption>{{ currentUser.email }}</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item clickable v-ripple>
+        <q-item-section>
+          <q-item-label>Gender</q-item-label>
+          <q-item-label caption>{{ currentUser.gender }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item clickable v-ripple>
@@ -120,6 +127,21 @@
 
               <q-input
                 filled
+                class="q-mb-md"
+                v-model="currentUser.suffixName"
+                label="Suffix Name"
+              />
+
+              <q-select
+                filled
+                class="q-mb-md"
+                v-model="currentUser.gender"
+                :options="['Male', 'Female']"
+                label="Gender"
+              />
+
+              <q-input
+                filled
                 v-model="currentUser.address"
                 label="Address"
                 lazy-rules
@@ -197,13 +219,11 @@
               />
 
               <q-input
+                mask="(+63)#########"
+                fill-mask
                 filled
                 v-model="currentUser.phoneNumber"
                 label="Phone Number"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Field cannot be empty',
-                ]"
               />
 
               <q-toggle
@@ -317,9 +337,14 @@ const onSubmit = async () => {
       address: currentUser.value.address,
       nationality: currentUser.value.nationality,
       dateOfBirth: currentUser.value.dateOfBirth,
+      suffixName: currentUser.value.suffixName,
+      gender: currentUser.value.gender,
       phoneNumber: currentUser.value.phoneNumber,
       profilePic: downloadURL ? downloadURL : currentUser.value.profilePic,
-      enableLocation: currentUser.value.enableLocation,
+      enableLocation:
+        currentUser.value.role === "admin"
+          ? currentUser.value.enableLocation
+          : false,
       role: currentUser.value.role,
       // dateOfPickUp: dateOfPickUp.value,
       // dateOfReturn: dateOfReturn.value,
@@ -330,8 +355,10 @@ const onSubmit = async () => {
       firstName: currentUser.value.firstName,
       middleName: currentUser.value.middleName,
       lastName: currentUser.value.lastName,
+      suffixName: currentUser.value.suffixName,
       email: currentUser.value.email,
       address: currentUser.value.address,
+      gender: currentUser.value.gender,
       nationality: currentUser.value.nationality,
       dateOfBirth: currentUser.value.dateOfBirth,
       phoneNumber: currentUser.value.phoneNumber,

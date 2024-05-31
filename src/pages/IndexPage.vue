@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding style="background: white">
     <div class="q-pa-md">
       <div class="text-h5 text-primary">Hi, {{ currentUser.firstName }}</div>
       <div class="text-h6">Choose your</div>
@@ -254,7 +254,7 @@
               animated
             >
               <q-step :name="1" title="Details" :done="step > 1">
-                <q-input
+                <!-- <q-input
                   filled
                   type="date"
                   v-model="dateNeeded"
@@ -263,16 +263,45 @@
                   :rules="[
                     (val) => (val && val.length > 0) || 'Field cannot be empty',
                   ]"
-                />
+                /> -->
+                <q-input
+                  label="Date Needed"
+                  filled
+                  v-model="dateNeeded"
+                  mask="date"
+                  :rules="['date']"
+                >
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
+                        <q-date
+                          v-model="dateNeeded"
+                          :options="enableFutureDates"
+                        >
+                          <div class="row items-center justify-end">
+                            <q-btn
+                              v-close-popup
+                              label="Close"
+                              color="primary"
+                              flat
+                            />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
                 <q-input
                   filled
                   type="number"
                   v-model="numberOfDays"
                   label="Number of days"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
+                  class="q-mb-md"
+                  @update:model-value="updddd"
                 />
 
                 <q-field label="Rate" filled stack-label class="q-mb-md">
@@ -338,6 +367,24 @@
 
                 <q-input
                   filled
+                  v-model="currentUser.suffixName"
+                  label="Suffix Name"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Field cannot be empty',
+                  ]"
+                />
+
+                <q-select
+                  filled
+                  class="q-mb-md"
+                  v-model="currentUser.gender"
+                  :options="['Male', 'Female']"
+                  label="Gender"
+                />
+
+                <q-input
+                  filled
                   v-model="currentUser.address"
                   label="Address"
                   lazy-rules
@@ -380,12 +427,10 @@
 
                 <q-input
                   filled
+                  mask="(+63)#########"
+                  fill-mask
                   v-model="currentUser.phoneNumber"
                   label="Phone Number"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
                 />
               </q-step>
 
@@ -752,6 +797,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
+import { date } from "quasar";
 import {
   getStorage,
   uploadBytes,
@@ -767,6 +813,7 @@ import { ref } from "vue";
 defineOptions({
   name: "IndexPage",
 });
+const ddd = date;
 const storage = getStorage();
 const basic = ref(false);
 const rentalDetails = ref({});
@@ -916,6 +963,21 @@ async function editRentalVehicle() {
   action.value = "edit";
   addLayout.value = true;
 }
+
+const enableFutureDates = (date) => {
+  console.log(date);
+  const timeStamp = Date.now();
+  // today.setHours(0, 0, 0, 0); // Set to start of the day
+  // return today;
+  return date >= ddd.formatDate(timeStamp, "YYYY/MM/DD");
+};
+
+const updddd = (value) => {
+  console.log(value);
+  if (value == 0) {
+    numberOfDays.value = 1;
+  }
+};
 
 async function clearVehicle() {
   addLayout.value = true;

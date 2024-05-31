@@ -39,6 +39,22 @@
 
       <q-input
         filled
+        v-model="suffixName"
+        label="Suffix Name"
+        lazy-rules
+        :rules="[(val) => (val && val.length > 0) || 'Field cannot be empty']"
+      />
+
+      <q-select
+        filled
+        class="q-mb-md"
+        v-model="gender"
+        :options="['Male', 'Female']"
+        label="Gender"
+      />
+
+      <q-input
+        filled
         v-model="address"
         label="Address"
         lazy-rules
@@ -107,10 +123,10 @@
 
       <q-input
         filled
+        mask="(+63)#########"
+        fill-mask
         v-model="phoneNumber"
         label="Phone Number"
-        lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'Field cannot be empty']"
       />
 
       <!-- <q-input
@@ -206,6 +222,8 @@ const $q = useQuasar();
 const firstName = ref(null);
 const middleName = ref(null);
 const lastName = ref(null);
+const suffixName = ref(null);
+const gender = ref(null);
 const email = ref(null);
 const password = ref(null);
 const confirmPassword = ref(null);
@@ -274,6 +292,8 @@ const addUserDb = async (userCredential) => {
       firstName: firstName.value,
       middleName: middleName.value,
       lastName: lastName.value,
+      suffixName: suffixName.value,
+      gender: gender.value,
       email: email.value,
       address: address.value,
       nationality: nationality.value,
