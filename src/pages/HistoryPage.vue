@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding style="background: white">
     <div class="text-h4 text-primary q-my-md">Rentals History</div>
     <q-input filled v-model="search" label="Search" class="q-my-sm">
       <!-- <template v-slot:after>
