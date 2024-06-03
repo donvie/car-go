@@ -369,10 +369,7 @@
                   filled
                   v-model="currentUser.suffixName"
                   label="Suffix Name"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Field cannot be empty',
-                  ]"
+                  class="q-mb-md"
                 />
 
                 <q-select
