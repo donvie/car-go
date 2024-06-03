@@ -37,13 +37,7 @@
         :rules="[(val) => (val && val.length > 0) || 'Field cannot be empty']"
       />
 
-      <q-input
-        filled
-        v-model="suffixName"
-        label="Suffix Name"
-        lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'Field cannot be empty']"
-      />
+      <q-input filled v-model="suffixName" label="Suffix Name" />
 
       <q-select
         filled
@@ -123,7 +117,7 @@
 
       <q-input
         filled
-        mask="(+63)#########"
+        mask="(+63)##########"
         fill-mask
         v-model="phoneNumber"
         label="Phone Number"

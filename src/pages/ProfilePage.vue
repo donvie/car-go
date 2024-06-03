@@ -219,7 +219,7 @@
               />
 
               <q-input
-                mask="(+63)#########"
+                mask="(+63)##########"
                 fill-mask
                 filled
                 v-model="currentUser.phoneNumber"
