@@ -1411,7 +1411,7 @@ const filterRentals = computed(() => {
     tab.value === "all"
       ? searchItems()
       : searchItems().filter((dd) => dd.typeOfVehicle === tab.value);
-  return rentalss;
+  return rentalss.filter((rental) => rental.isAvailable);
 });
 
 const rentNow = () => {
