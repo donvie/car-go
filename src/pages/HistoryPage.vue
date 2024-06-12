@@ -18,10 +18,10 @@
       >
         <q-tab name="All" label="All" />
         <q-tab name="Pending" label="Pending" />
-        <q-tab @click="checkIfLapsed()" name="Ongoing" label="Ongoing" />
+        <q-tab name="Ongoing" label="Ongoing" />
         <q-tab name="Done" label="Done" />
         <q-tab name="Cancelled" label="Cancelled" />
-        <q-tab @click="checkIfLapsed()" name="Lapsed" label="Lapsed" />
+        <q-tab name="Lapsed" label="Lapsed" />
       </q-tabs>
 
       <q-list bordered v-if="filterRentals.length === 0" class="q-mt-md">
@@ -497,7 +497,7 @@ const searchItems = () => {
 
 // const dateOfReturn = ref(null);
 onMounted(() => {
-  checkIfLapsed();
+  // checkIfLapsed();
 });
 
 function checkIfLapsed() {
